@@ -1,0 +1,11 @@
+.myEditForm {
+  float: right;
+  margin-left: 20px;
+}
+.myMenu {
+  float: left;
+}
+
+.userInfo {
+  display: flex;
+}
