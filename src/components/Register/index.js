@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import store from "../../store";
 import { registerAction } from "../../store/actionCreators";
+import { createBrowserHistory } from "history";
+import axios from "axios";
 import {
   Form,
   Input,
@@ -57,10 +59,25 @@ class RegistrationForm extends React.Component {
   };
 
   handleSubmit = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         // 传给store
+        axios
+          .post("/add", {
+            data: {
+              username: "admin3",
+              password: 123
+            }
+          })
+          .then((res) => {
+            let history = createBrowserHistory();
+            history.push({
+              pathname: "/",
+              state: {}
+            });
+            history.go();
+          });
         const userdata = [...store.getState().data];
         if (userdata.find((item) => item.username === values.username)) {
           alert("用户名重复");

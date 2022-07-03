@@ -3,6 +3,7 @@ import store from "../../store";
 import { Switch, Route, Link } from "react-router-dom";
 import { registerAction, editUserAction } from "../../store/actionCreators";
 import { createBrowserHistory } from "history";
+import axios from "axios";
 import {
   Form,
   Input,
@@ -56,16 +57,37 @@ class RegistrationForm extends React.Component {
   state = {
     confirmDirty: false,
     autoCompleteResult: [],
-    data: store.getState().loginUser
+    user: store.getState().user
   };
 
   handleSubmit = (e) => {
+    // e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
         // 传给store
-        const action = editUserAction(values);
-        store.dispatch(action);
+        axios
+          .post("/edit", {
+            data: {
+              ...values
+            }
+          })
+          .then((res) => {
+            // console.log(res, "res");
+
+            if (res.data.status === 200) {
+              sessionStorage.setItem("user", JSON.stringify(res.data.data));
+
+              const action = editUserAction(res.data.data);
+              store.dispatch(action);
+              let history = createBrowserHistory();
+              history.push({
+                pathname: "/user",
+                state: {}
+              });
+              history.go();
+            }
+          });
       }
     });
   };
@@ -163,7 +185,7 @@ class RegistrationForm extends React.Component {
                 whitespace: true
               }
             ],
-            initialValue: this.state.data.username
+            initialValue: this.state.user.username
           })(<Input />)}
         </Form.Item>
         <Form.Item label="E-mail">
@@ -178,12 +200,12 @@ class RegistrationForm extends React.Component {
                 message: "Please input your E-mail!"
               }
             ],
-            initialValue: this.state.data.email
+            initialValue: this.state.user.email
           })(<Input />)}
         </Form.Item>
         <Form.Item label="Habitual Residence">
           {getFieldDecorator("residence", {
-            initialValue: this.state.data.residence,
+            initialValue: this.state.user.residence,
             rules: [
               {
                 type: "array",
@@ -198,13 +220,13 @@ class RegistrationForm extends React.Component {
             rules: [
               { required: true, message: "Please input your phone number!" }
             ],
-            initialValue: this.state.data.phone
+            initialValue: this.state.user.phone
           })(<Input addonBefore={prefixSelector} style={{ width: "100%" }} />)}
         </Form.Item>
         <Form.Item label="Website">
           {getFieldDecorator("website", {
             rules: [{ required: true, message: "Please input website!" }],
-            initialValue: this.state.data.website
+            initialValue: this.state.user.website
           })(
             <AutoComplete
               dataSource={websiteOptions}
@@ -217,7 +239,7 @@ class RegistrationForm extends React.Component {
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
-            <Link to="/user">confirm</Link>
+            confirm
           </Button>
         </Form.Item>
       </Form>

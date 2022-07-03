@@ -4,8 +4,9 @@ import { Form, Icon, Input, Button, Checkbox } from "antd";
 import "./index.css";
 import store from "../../store";
 import { createBrowserHistory } from "history";
-import { withRouter } from "react-router";
 import { loginAction } from "../../store/actionCreators";
+import axios from "axios";
+import "../../mock/user";
 
 class NormalLoginForm extends React.Component {
   handleSubmit = (e) => {
@@ -15,33 +16,53 @@ class NormalLoginForm extends React.Component {
       if (!err) {
         console.log("Received values of form: ", values);
         // 获取并验证data中用户信息
-
-        new Promise((resolve, reject) => {
-          const userList = store.getState().data;
-          const user = userList.find(
-            (item) => item.username === values.username
-          );
-          if (user === undefined) {
-            alert("用户不存在");
-            reject();
-          } else {
-            resolve(user);
-          }
-        }).then((user) => {
-          if (user.password === values.password) {
-            //  页面跳转
-            const action = loginAction(user);
-            store.dispatch(action);
-            let history = createBrowserHistory();
-            history.push({
-              pathname: "/user",
-              state: {}
-            });
-            history.go();
-          } else {
-            alert("密码错误");
-          }
-        });
+        axios
+          .get("/user", {
+            data: values
+          })
+          .then((res) => {
+            if (res.data.status !== 200) {
+              alert(res.data.msg);
+            } else {
+              const action = loginAction(res.data.data);
+              store.dispatch(action);
+              console.log(res.data.data);
+              sessionStorage.setItem("user", JSON.stringify(res.data.data));
+              sessionStorage.setItem("login", "true");
+              let history = createBrowserHistory();
+              history.push({
+                pathname: "/user",
+                state: {}
+              });
+              history.go();
+            }
+          });
+        // new Promise((resolve, reject) => {
+        //   const userList = store.getState().data;
+        //   const user = userList.find(
+        //     (item) => item.username === values.username
+        //   );
+        //   if (user === undefined) {
+        //     alert("用户不存在");
+        //     reject();
+        //   } else {
+        //     resolve(user);
+        //   }
+        // }).then((user) => {
+        //   if (user.password === values.password) {
+        //     //  页面跳转
+        //     const action = loginAction(user);
+        //     store.dispatch(action);
+        //     let history = createBrowserHistory();
+        //     history.push({
+        //       pathname: "/user",
+        //       state: {}
+        //     });
+        //     history.go();
+        //   } else {
+        //     alert("密码错误");
+        //   }
+        // });
       }
     });
   };
@@ -58,7 +79,7 @@ class NormalLoginForm extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <div key={this.props.location.key}>
+      <div>
         <Form onSubmit={this.handleSubmit} className="login-form">
           <Form.Item>
             {getFieldDecorator("username", {
@@ -121,4 +142,4 @@ const WrappedNormalLoginForm = Form.create({ name: "normal_login" })(
   NormalLoginForm
 );
 
-export default withRouter(WrappedNormalLoginForm);
+export default WrappedNormalLoginForm;

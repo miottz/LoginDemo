@@ -1,4 +1,4 @@
-import { LOGIN, REGISTER, EDIT_USER } from "./actionType";
+import { LOGIN_USER, REGISTER, EDIT_USER } from "./actionType";
 
 export const registerAction = (value) => ({
   type: REGISTER,
@@ -6,7 +6,7 @@ export const registerAction = (value) => ({
 });
 
 export const loginAction = (user) => ({
-  type: LOGIN,
+  type: LOGIN_USER,
   user
 });
 

@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "data": [
+    {
+      "username": "admin",
+      "prefix": "86",
+      "email": "admin@163.com",
+      "password": "123456",
+      "confirm": "123456",
+      "residence": ["zhejiang", "hangzhou", "xihu"],
+      "phone": "110",
+      "website": "http://admin.com",
+      "agreement": true
+    }
+  ],
+  "loginUser": {
+    "username": "admin",
+    "prefix": "86",
+    "email": "admin@163.com",
+    "password": "123456",
+    "confirm": "123456",
+    "residence": ["zhejiang", "hangzhou", "xihu"],
+    "phone": "110",
+    "website": "http://admin.com",
+    "agreement": true
+  }
+}
